@@ -1,5 +1,6 @@
 package org.launchcode.controllers;
 
+import org.launchcode.models.Employer;
 import org.launchcode.models.Job;
 import org.launchcode.models.JobFieldType;
 import org.launchcode.models.data.JobFieldData;
@@ -34,18 +35,26 @@ public class JobController {
 
     @RequestMapping(value = "add", method = RequestMethod.GET)
     public String add(Model model) {
-        model.addAttribute(new JobForm());
+        model.addAttribute("jobForm", new JobForm());
         return "new-job";
     }
 
     @RequestMapping(value = "add", method = RequestMethod.POST)
     public String add(Model model, @Valid JobForm jobForm, Errors errors) {
+        Job newJob = new Job(jobForm.getName(),jobData.getEmployers().findById(jobForm.getEmployerId()),
+                         jobData.getLocations().findById(jobForm.getLocationId()),
+                         jobData.getPositionTypes().findById(jobForm.getPositionTypesId()),
+                         jobData.getCoreCompetencies().findById(jobForm.getCoreCompetenciesId()));
+        jobData.add(newJob);
+
+        Integer newJobId = newJob.getId();
+        String newJobIdString = Integer.toString(newJobId);
 
         // TODO #6 - Validate the JobForm model, and if valid, create a
         // new Job and add it to the jobData data store. Then
         // redirect to the job detail view for the new Job.
 
-        return "";
+        return "redirect:?id=" + newJobIdString;
 
     }
 }
